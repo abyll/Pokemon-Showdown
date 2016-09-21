@@ -96,7 +96,7 @@ exports.commands = {
 	dexsearchhelp: ["/dexsearch [parameter], [parameter], [parameter], ... - Searches for Pok\u00e9mon that fulfill the selected criteria",
 		"Search categories are: type, tier, color, moves, ability, gen, resists, recovery, priority, stat.",
 		"Valid colors are: green, red, blue, white, brown, yellow, purple, pink, gray and black.",
-		"Valid tiers are: Uber/OU/BL/UU/BL2/RU/BL3/NU/BL4/PU/NFE/LC/CAP.",
+		"Valid tiers are: Uber/OU/BL/UU/BL2/RU/BL3/NU/BL4/PU/FU/NFE/LC/CAP.",
 		"Types must be followed by ' type', e.g., 'dragon type'.",
 		"'resists' followed by a type will show Pok\u00e9mon that resist that typing, e.g., 'resists normal'.",
 		"Inequality ranges use the characters '>=' for '≥' and '<=' for '≤', e.g., 'hp <= 95' searches all Pok\u00e9mon with HP less than or equal to 95.",
@@ -261,7 +261,7 @@ if (process.send && module === process.mainModule) {
 
 function runDexsearch(target, cmd, canAll, message) {
 	let searches = [];
-	let allTiers = {'uber':'Uber', 'ou':'OU', 'bl':"BL", 'uu':'UU', 'bl2':"BL2", 'ru':'RU', 'bl3':"BL3", 'nu':'NU', 'bl4':"BL4", 'pu':'PU', 'nfe':'NFE', 'lc uber':"LC Uber", 'lc':'LC', 'cap':"CAP"};
+	let allTiers = {'uber':'Uber', 'ou':'OU', 'bl':"BL", 'uu':'UU', 'bl2':"BL2", 'ru':'RU', 'bl3':"BL3", 'nu':'NU', 'bl4':"BL4", 'pu':'PU', 'fu':'FU', 'nfe':'NFE', 'lc uber':"LC Uber", 'lc':'LC', 'cap':"CAP"};
 	let allColours = {'green':1, 'red':1, 'blue':1, 'white':1, 'brown':1, 'yellow':1, 'purple':1, 'pink':1, 'gray':1, 'black':1};
 	let allStats = {'hp':1, 'atk':1, 'def':1, 'spa':1, 'spd':1, 'spe':1, 'bst':1};
 	let showAll = false;
