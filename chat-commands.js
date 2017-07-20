@@ -2560,7 +2560,7 @@ exports.commands = {
 				global.BotManager = require('./bots');
 				return this.sendReply("The Bots have been hot-patched.");
 			} else if (target === 'league' || target === 'tppla') {
-				return this.parse('/adventbuilder reload');
+				return this.parse('/leaguetool reload');
 				
 			} else if (target === 'stadium' || target === 'music') {
 				Config.stadium.uncache();

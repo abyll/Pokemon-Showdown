@@ -50,8 +50,8 @@ function confirmToken(token) {
 
 function commandCheck(ctx) {
 	if (ctx.cmdToken === '!') { ctx.errorReply("You cannot broadcast this command."); return false; }
-	if (Rooms.global.lockdown) { ctx.connection.send(`|queryresponse|adventbuilder|{"err":"lockdown"}`); return false; }
-	if (!ctx.user.registered) { ctx.connection.send(`|queryresponse|adventbuilder|{"err":"unregistered"}`); return false; }
+	if (Rooms.global.lockdown) { ctx.connection.send(`|queryresponse|leaguetool|{"err":"lockdown"}`); return false; }
+	if (!ctx.user.registered) { ctx.connection.send(`|queryresponse|leaguetool|{"err":"unregistered"}`); return false; }
 	return true;
 }
 
@@ -74,7 +74,7 @@ function createTrainerID() {
 // 		'HP Percentage Mod','Exact HP Mod',
 // 		//'Groundsource Mod',
 // 	];
-// 	this.sendReply(`|adventbuilder|league-extra-formats|${JSON.stringify()}`);
+// 	this.sendReply(`|leaguetool|league-extra-formats|${JSON.stringify()}`);
 // }
 function getGymInfo(json){
 	json = json || {};
@@ -238,7 +238,7 @@ function LeagueSetupSend(msg) {
 LeagueSetup.send = LeagueSetupSend; // Note: this always runs on hotpatch
 
 exports.commands = {
-	adventbuilder : {
+	leaguetool : {
 		reload : function() {
 			if (!this.can('hotpatch')) return false;
 			try {
@@ -258,7 +258,7 @@ exports.commands = {
 			return this.sendReply("The TPPLeague setup has been reloaded from disk.");
 		},
 		request : {
-			// /adventbuilder request options
+			// /leaguetool request options
 			options : function(target, room, user) {
 				if (!commandCheck(this)) return;
 				
@@ -282,11 +282,11 @@ exports.commands = {
 				} else {
 					opts.push("league-challenge:new");
 				}
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify( {screen:"opts", info:opts} )}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify( {screen:"opts", info:opts} )}`);
 			},
 			'league-admin': function(target, room, user) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let json = {
 					options: LeagueSetup.options,
@@ -298,12 +298,12 @@ exports.commands = {
 					screen: 'league-admin',
 					info: json,
 				};
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify( resp )}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify( resp )}`);
 			},
 			'league-champ': 'league-elite',
 			'league-elite': function(target, room, user) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.elites[user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.elites[user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let resp = {
 					screen: 'league-elite',
@@ -314,11 +314,11 @@ exports.commands = {
 						avatar: this.user.avatar,
 					},
 				};
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(resp)}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(resp)}`);
 			},
 			'league-gym': function(target, room, user) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.gyms[user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.gyms[user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let resp = {
 					screen: 'league-gym',
@@ -329,7 +329,7 @@ exports.commands = {
 						avatar: this.user.avatar,
 					},
 				};
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(resp)}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(resp)}`);
 			},
 			'view-league': function(target, room, user) {
 				if (this.cmdToken === '!') { this.errorReply("You cannot broadcast this command."); return false; }
@@ -338,11 +338,11 @@ exports.commands = {
 					screen: 'view-league',
 					league: getGymInfo(),
 				};
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(resp)}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(resp)}`);
 			},
 			'league-challenge': function(target, room, user) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.challengers[user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.challengers[user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let resp = {
 					screen: 'league-challenge',
@@ -357,14 +357,14 @@ exports.commands = {
 				// Gen 7 trainer ids: secretid + trainerid * 65536, last 6 digits
 				let trid = resp.info.trainerid;
 				resp.info.trainerid = String(trid[0] + trid[1] * 65536).substr(-6);
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(resp)}`);
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(resp)}`);
 			},
 		}, 
 		'new' : {
-			// /adventbuilder new league-challenge - Creates a new league challenge for this user
+			// /leaguetool new league-challenge - Creates a new league challenge for this user
 			'league-challenge': function(target, room, user) {
 				if (!commandCheck(this)) return;
-				if (LeagueSetup.challengers[this.user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"League Challenge already exists for this user."}`);
+				if (LeagueSetup.challengers[this.user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"League Challenge already exists for this user."}`);
 				
 				LeagueSetup.challengers[user.userid] = {
 					teams : {},
@@ -377,28 +377,28 @@ exports.commands = {
 				let resp = {
 					welcome: "league-challenge",
 				};
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(resp)}`);
-				this.parse('/adventbuilder request league-challenge');
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(resp)}`);
+				this.parse('/leaguetool request league-challenge');
 			},
 		},
 		'del' : {
-			// /adventbuilder del league-challenge [confirmtoken] - Deletes the user's league challenge
+			// /leaguetool del league-challenge [confirmtoken] - Deletes the user's league challenge
 			'league-challenge': function(target) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.challengers[this.user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.challengers[this.user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				if (!confirmToken(target)) {
 					let confirmid = createToken();
 					delConfirm[confirmid] = Date.now();
-					return this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
+					return this.connection.send(`|queryresponse|leaguetool|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
 				}
 				delete LeagueSetup.challengers[this.user.userid];
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"League Challenge has been forfeited successfully."}`);
-				this.parse('/adventbuilder request options');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"League Challenge has been forfeited successfully."}`);
+				this.parse('/leaguetool request options');
 			},
 		},
-		// /adventbuilder teamcommit [type]|[oldid]|[newid]|[teamstring] - Commits a saved team.
+		// /leaguetool teamcommit [type]|[oldid]|[newid]|[teamstring] - Commits a saved team.
 		teamcommit : function(target, room, user) {
 			if (!commandCheck(this)) return;
 				
@@ -420,10 +420,10 @@ exports.commands = {
 			LeagueSetup.markDirty();
 		},
 		commit : {
-			// /adventbuilder commit leagueopts [json] - Sent by the Admin screen to commit league-wide options
+			// /leaguetool commit leagueopts [json] - Sent by the Admin screen to commit league-wide options
 			leagueopts : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				try {
 					let obj = JSON.parse(target);
@@ -436,137 +436,137 @@ exports.commands = {
 				}
 				
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"League Options saved!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"League Options saved!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit rmchal [username] [confirmtoken] - Sent by the Admin screen to remove a challenger
+			// /leaguetool commit rmchal [username] [confirmtoken] - Sent by the Admin screen to remove a challenger
 			rmchal : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				target = target.split(" ");
 				let other = { userid: toId(target[0]), name: target[0] };
 				if (!LeagueSetup.challengers[other.userid]) {
 					other = Users.get(target[0]) || { userid: toId(target[0]), name: target[0] };
 				}
-				if (!LeagueSetup.challengers[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"There is no Challenger profile for '${other.name}'"}`);
+				if (!LeagueSetup.challengers[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"There is no Challenger profile for '${other.name}'"}`);
 				
 				if (!confirmToken(target[1])) {
 					let confirmid = createToken();
 					delConfirm[confirmid] = Date.now();
-					return this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
+					return this.connection.send(`|queryresponse|leaguetool|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
 				}
 				delete LeagueSetup.challengers[other.userid];
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Challenger profile for '${other.name}' deleted!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Challenger profile for '${other.name}' deleted!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit addgym [username] - Sent by the Admin screen to add a new gymleader
+			// /leaguetool commit addgym [username] - Sent by the Admin screen to add a new gymleader
 			addgym : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let other = { userid: toId(target), name: target };
 				if (!LeagueSetup.gyms[other.userid]) {
 					other = Users.get(target) || { userid: toId(target), name: target };
 				}
-				if (LeagueSetup.gyms[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"Gym already exists for user ${other.name}."}`);
+				if (LeagueSetup.gyms[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"Gym already exists for user ${other.name}."}`);
 				LeagueSetup.send({type:"new", event:"gym", userid: other.userid, username: other.name});
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Gym for '${other.name}' added!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Gym for '${other.name}' added!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit rmgym [username] [confirmtoken] - Sent by the Admin screen to remove a gymleader
+			// /leaguetool commit rmgym [username] [confirmtoken] - Sent by the Admin screen to remove a gymleader
 			rmgym : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				target = target.split(" ");
 				let other = { userid: toId(target[0]), name: target[0] };
 				if (!LeagueSetup.gyms[other.userid]) {
 					other = Users.get(target[0]) || { userid: toId(target[0]), name: target[0] };
 				}
-				if (!LeagueSetup.gyms[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"There is no Gym for '${other.name}'"}`);
+				if (!LeagueSetup.gyms[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"There is no Gym for '${other.name}'"}`);
 				
 				if (!confirmToken(target[1])) {
 					let confirmid = createToken();
 					delConfirm[confirmid] = Date.now();
-					return this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
+					return this.connection.send(`|queryresponse|leaguetool|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
 				}
 				delete LeagueSetup.gyms[other.userid];
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Gym for '${other.name}' deleted!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Gym for '${other.name}' deleted!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit addelite [username] - Sent by the Admin screen to add a new elite member
+			// /leaguetool commit addelite [username] - Sent by the Admin screen to add a new elite member
 			addelite : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let other = { userid: toId(target), name: target };
 				if (!LeagueSetup.elites[other.userid]) {
 					other = Users.get(target) || { userid: toId(target), name: target };
 				}
-				if (LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"Elite settings already exist for user ${other.name}."}`);
+				if (LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"Elite settings already exist for user ${other.name}."}`);
 				LeagueSetup.send({type:"new", event:"elite", userid: other.userid, username: other.name});
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Elite for '${other.name}' added!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Elite for '${other.name}' added!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit rmelite [username] [confirmtoken] - Sent by the Admin screen to remove an elite member
+			// /leaguetool commit rmelite [username] [confirmtoken] - Sent by the Admin screen to remove an elite member
 			rmelite : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				target = target.split(" ");
 				let other = { userid: toId(target[0]), name: target[0] };
 				if (!LeagueSetup.elites[other.userid]) {
 					other = Users.get(target[0]) || { userid: toId(target[0]), name: target[0] };
 				}
-				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"There is no Elite settings for '${other.name}'"}`);
+				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"There is no Elite settings for '${other.name}'"}`);
 				
 				if (!confirmToken(target[1])) {
 					let confirmid = createToken();
 					delConfirm[confirmid] = Date.now();
-					return this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
+					return this.connection.send(`|queryresponse|leaguetool|${JSON.stringify({ confirm:confirmid, cmd:this.message })}`);
 				}
 				delete LeagueSetup.elites[other.userid];
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Elite for '${other.name}' deleted!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Elite for '${other.name}' deleted!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit promotechamp [username] - Sent by the Admin screen to set an elite member as chamption
+			// /leaguetool commit promotechamp [username] - Sent by the Admin screen to set an elite member as chamption
 			promotechamp : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let other = { userid: toId(target), name: target };
 				if (!LeagueSetup.elites[other.userid]) {
 					other = Users.get(target) || { userid: toId(target), name: target };
 				}
-				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"There is no Elite settings for '${other.name}"}'`);
+				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"There is no Elite settings for '${other.name}"}'`);
 				LeagueSetup.elites[other.userid].isChamp = true;
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Elite '${other.name}' has been promoted to Champion!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Elite '${other.name}' has been promoted to Champion!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit demotechamp [username] - Sent by the Admin screen to unset am elite member as champion
+			// /leaguetool commit demotechamp [username] - Sent by the Admin screen to unset am elite member as champion
 			demotechamp : function(target){
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.admins.includes(this.user.userid)) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let other = { userid: toId(target), name: target };
 				if (!LeagueSetup.elites[other.userid]) {
 					other = Users.get(target) || { userid: toId(target), name: target };
 				}
-				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"There is no Elite settings for '${other.name}"}'`);
+				if (!LeagueSetup.elites[other.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"There is no Elite settings for '${other.name}"}'`);
 				LeagueSetup.elites[other.userid].isChamp = false;
 				LeagueSetup.markDirty();
-				this.connection.send(`|queryresponse|adventbuilder|{"success":"Elite '${other.name}' has been demoted to Elite Four member!"}`);
-				this.parse('/adventbuilder request league-admin');
+				this.connection.send(`|queryresponse|leaguetool|{"success":"Elite '${other.name}' has been demoted to Elite Four member!"}`);
+				this.parse('/leaguetool request league-admin');
 			},
-			// /adventbuilder commit elite {json} - Sent by the Elite settings screen to commit changed made by the screen
+			// /leaguetool commit elite {json} - Sent by the Elite settings screen to commit changed made by the screen
 			elite : function(target) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.elites[this.user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.elites[this.user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let errors = [];
 				try {
@@ -633,13 +633,13 @@ exports.commands = {
 				if (errors.length) {
 					repl.success = "Settings saved with the following caveats:\n\n- "+errors.join("\n- ");
 				}
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(repl)}`);
-				this.parse('/adventbuilder request league-elite');
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(repl)}`);
+				this.parse('/leaguetool request league-elite');
 			},
-			// /adventbuilder commit gym {json} - Sent by the Gym settings screen to commit changed made by the screen
+			// /leaguetool commit gym {json} - Sent by the Gym settings screen to commit changed made by the screen
 			gym : function(target) {
 				if (!commandCheck(this)) return;
-				if (!LeagueSetup.gyms[this.user.userid]) return this.connection.send(`|queryresponse|adventbuilder|{"err":"unauthed"}`);
+				if (!LeagueSetup.gyms[this.user.userid]) return this.connection.send(`|queryresponse|leaguetool|{"err":"unauthed"}`);
 				
 				let errors = [];
 				try {
@@ -745,13 +745,13 @@ exports.commands = {
 				if (errors.length) {
 					repl.success = "Settings saved with the following caveats:\n\n- "+errors.join("\n- ");
 				}
-				this.connection.send(`|queryresponse|adventbuilder|${JSON.stringify(repl)}`);
-				this.parse('/adventbuilder request league-gym');
+				this.connection.send(`|queryresponse|leaguetool|${JSON.stringify(repl)}`);
+				this.parse('/leaguetool request league-gym');
 			},
 		},
 	},
-	adventbuilderhelp : [
-		'/adventbuilder - Command used internally by the Adventure Builder. Use the "TPPLeague" tab instead.',
+	leaguetoolhelp : [
+		'/leaguetool - Command used internally by the Adventure Builder. Use the "TPPLeague" tab instead.',
 	],
 	
 	pendingchallenges : function(target) {
